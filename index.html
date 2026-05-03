@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> cyber
+     OS</title>
+
+<style>
+body { margin:0; font-family:Arial; overflow:hidden; }
+
+#desktop {
+    height:100vh;
+    background:url('my image.jpeg') center/cover;
+    padding:20px;
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.icon {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:80px;
+    height:90px;
+    margin:15px;
+    background:rgba(141, 139, 139, 0.185);
+    border-radius:10px;
+    cursor:pointer;
+    font-size:26px;
+}
+.icon span { font-size:11px; }
+#taskbar {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#222;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:5px 10px;
+}
+
+/* BLUE BOX */
+#sysInfo {
+    background:#2196f3;
+    padding:5px 12px;
+    border-radius:12px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.window {
+    display:none;
+    position:absolute;
+    top:100px;
+    left:100px;
+    width:320px;
+    background:white;
+    border-radius:10px;
+}
+
+.title {
+    background:#444;
+    color:white;
+    padding:8px;
+    cursor:move;
+    display:flex;
+    justify-content:space-between;
+}
+
+.calc-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    padding:10px;
+}
+.calc-grid button { height:40px; }
+
+.cell {
+    height:60px;
+    background:#eee;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    cursor:pointer;
+}
+.win { background:#a5d6a7; }
+</style>
+</head>
+
+<body>
+
+<!-- DESKTOP -->
+<div id="desktop">
+<div class="icon" onclick="openApp('calc')">🧮<span>Calculator</span></div>
+<div class="icon" onclick="openApp('calendar')">📅<span>Calendar</span></div>
+<div class="icon" onclick="openApp('camera')">📷<span>Camera</span></div>
+<div class="icon" onclick="openApp('wallpaper')">🎨<span>Wallpaper</span></div>
+<div class="icon" onclick="openApp('game')">🎮<span>Game</span></div>
+<div class="icon" onclick="openApp('notes')">📝<span>Notes</span></div>
+<div class="icon" onclick="openApp('files')">📂<span>Files</span></div>
+<div class="icon" onclick="openApp('browser')">🌐<span>Browser</span></div>
+<div class="icon" onclick="openApp('settings')">⚙️<span>Settings</span></div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+<div>My OS</div>
+
+<div id="sysInfo">
+🔋 <span id="battery">--%</span> | 🌦️ <span id="weather">Loading...</span>
+</div>
+
+<div id="time"></div>
+</div>
+
+<!-- Calculator -->
+<div id="calc" class="window">
+<div class="title">Calculator <button onclick="closeApp('calc')">X</button></div>
+<input id="calcInput" style="width:95%;margin:10px;height:35px;">
+<div class="calc-grid">
+<button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button><button onclick="press('/')">/</button>
+<button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button><button onclick="press('*')">*</button>
+<button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button><button onclick="press('-')">-</button>
+<button onclick="press('0')">0</button><button onclick="press('.')">.</button><button onclick="clearCalc()">C</button><button onclick="press('+')">+</button>
+<button onclick="calculate()">=</button>
+</div>
+</div>
+
+<!-- Calendar -->
+<div id="calendar" class="window">
+<div class="title">Calendar <button onclick="closeApp('calendar')">X</button></div>
+<div id="calContent"></div>
+</div>
+
+<!-- Camera -->
+<div id="camera" class="window">
+<div class="title">Camera <button onclick="closeApp('camera')">X</button></div>
+<video id="video" width="100%" autoplay></video>
+</div>
+
+<!-- Wallpaper -->
+<div id="wallpaper" class="window">
+<div class="title">Wallpaper <button onclick="closeApp('wallpaper')">X</button></div>
+<button onclick="setWall(1)">Wall1</button>
+<button onclick="setWall(2)">Wall2</button>
+<button onclick="setWall(3)">Wall3</button>
+</div>
+
+<!-- Game -->
+<div id="game" class="window">
+<div class="title">Tic Tac Toe <button onclick="closeApp('game')">X</button></div>
+<div style="text-align:center;"><b id="turn">Turn: X</b></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:10px;">
+<div class="cell" onclick="move(0)"></div><div class="cell" onclick="move(1)"></div><div class="cell" onclick="move(2)"></div>
+<div class="cell" onclick="move(3)"></div><div class="cell" onclick="move(4)"></div><div class="cell" onclick="move(5)"></div>
+<div class="cell" onclick="move(6)"></div><div class="cell" onclick="move(7)"></div><div class="cell" onclick="move(8)"></div>
+</div>
+<button onclick="resetGame()">Restart</button>
+</div>
+
+<!-- Notes -->
+<div id="notes" class="window">
+<div class="title">Notes <button onclick="closeApp('notes')">X</button></div>
+<textarea id="noteArea" style="width:95%;height:150px;margin:10px;"></textarea>
+<button onclick="saveNote()">Save</button>
+</div>
+
+<!-- Files -->
+<div id="files" class="window">
+<div class="title">Files <button onclick="closeApp('files')">X</button></div>
+<ul style="padding:10px;">
+<li>📄 Resume.txt</li>
+<li>🖼️ Image.png</li>
+<li>🎮 Game.exe</li>
+<li>📁 Projects</li>
+</ul>
+</div>
+
+<!-- Browser -->
+<div id="browser" class="window">
+<div class="title">Browser <button onclick="closeApp('browser')">X</button></div>
+<input id="url" placeholder="Enter URL" style="width:70%">
+<button onclick="go()">Go</button>
+<iframe id="frame" style="width:100%;height:200px;"></iframe>
+</div>
+
+<!-- Settings -->
+<div id="settings" class="window">
+<div class="title">Settings <button onclick="closeApp('settings')">X</button></div>
+<button onclick="darkMode()">Toggle Dark Mode</button>
+</div>
+
+<script>
+
+// open/close
+function openApp(id){document.getElementById(id).style.display="block";}
+function closeApp(id){document.getElementById(id).style.display="none";}
+
+// clock
+setInterval(()=>{time.innerText=new Date().toLocaleTimeString();},1000);
+
+// calendar
+document.getElementById("calContent").innerHTML =
+"<h3>"+new Date().toDateString()+"</h3>";
+
+// camera
+navigator.mediaDevices.getUserMedia({video:true})
+.then(s=>video.srcObject=s)
+.catch(()=>console.log("camera blocked"));
+
+// wallpaper
+function setWall(n){
+let d=desktop;
+if(n==1)d.style.background="url('https://picsum.photos/id/1015/1600/900') center/cover";
+if(n==2)d.style.background="url('https://picsum.photos/id/1016/1600/900') center/cover";
+if(n==3)d.style.background="url('https://picsum.photos/id/1020/1600/900') center/cover";
+}
+
+// calculator
+function press(v){calcInput.value+=v;}
+function calculate(){try{calcInput.value=eval(calcInput.value);}catch{alert("error");}}
+function clearCalc(){calcInput.value="";}
+
+// game
+let board=["","","","","","","","",""];
+let player="X", gameOver=false;
+
+function move(i){
+if(board[i]=="" && !gameOver){
+board[i]=player; render(); check();
+if(!gameOver){player=player=="X"?"O":"X"; turn.innerText="Turn: "+player;}
+}}
+
+function render(){document.querySelectorAll(".cell").forEach((c,i)=>c.innerText=board[i]);}
+
+function check(){
+let w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+for(let x of w){
+let[a,b,c]=x;
+if(board[a] && board[a]==board[b] && board[a]==board[c]){
+gameOver=true; setTimeout(resetGame,1500);
+}}}
+
+function resetGame(){
+board=["","","","","","","","",""];
+gameOver=false; player="X"; turn.innerText="Turn: X";
+document.querySelectorAll(".cell").forEach(c=>c.innerText="");
+}
+
+// notes
+function saveNote(){localStorage.setItem("note",noteArea.value);}
+noteArea.value=localStorage.getItem("note")||"";
+
+// browser
+function go(){
+let link=url.value.trim();
+if(!link.startsWith("http")) link="https://"+link;
+frame.src=link;
+}
+
+// drag
+let dragEl,ox,oy;
+document.onmousedown=e=>{
+if(e.target.parentElement.classList.contains("title")){
+dragEl=e.target.parentElement.parentElement;
+ox=e.clientX-dragEl.offsetLeft;
+oy=e.clientY-dragEl.offsetTop;
+document.onmousemove=m=>{
+if(dragEl){
+dragEl.style.left=(m.clientX-ox)+"px";
+dragEl.style.top=(m.clientY-oy)+"px";
+}};
+document.onmouseup=()=>dragEl=null;
+}};
+
+// dark mode
+let dark=false;
+function darkMode(){
+dark=!dark;
+document.body.style.background=dark?"#111":"";
+document.body.style.color=dark?"white":"";
+document.querySelectorAll(".window").forEach(w=>{
+w.style.background=dark?"#333":"white";
+w.style.color=dark?"white":"black";
+});
+}
+
+// battery
+navigator.getBattery().then(b=>{
+function upd(){battery.innerText=Math.round(b.level*100)+"%";}
+upd(); b.addEventListener("levelchange",upd);
+});
+
+// weather
+async function getWeather(){
+try{
+let res=await fetch("https://api.openweathermap.org/data/2.5/weather?q=Bhiwandi&units=metric&appid=YOUR_API_KEY");
+let d=await res.json();
+weather.innerText=Math.round(d.main.temp)+"°C "+d.weather[0].main;
+}catch{weather.innerText="No data";}
+}
+getWeather();
+
+</script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
